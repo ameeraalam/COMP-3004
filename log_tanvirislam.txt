@@ -1,0 +1,4 @@
+Week 3
+------
+- server setup complete
+- react-native environment setup complete
