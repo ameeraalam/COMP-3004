@@ -21,7 +21,9 @@
     "body-parser": "^1.18.2",
     "express": "^4.15.5",
     "mongodb": "^2.2.31",
+    "node-onesignal": "^0.3.1",
     "nodemon": "^1.12.1",
-    "socket.io": "^2.0.4"
+    "socket.io": "^2.0.4",
+    "util": "^0.10.3"
   }
 }

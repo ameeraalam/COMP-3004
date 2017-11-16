@@ -25,7 +25,7 @@ module.exports = function() {
 
 	/* Socket io configuration */
 	let server = require("http").createServer(app)
-	var io = require("socket.io")(server); 
+	var io = require("socket.io")(server);
 
 	/* Routings */
 
@@ -38,7 +38,7 @@ module.exports = function() {
 	app.post("/driverInfo", (req, res) => { CONTROLLER.driverInfo(req, res); });
 
 	app.post("/storeChat", (req, res) => { CONTROLLER.storeChat(req, res); });
-					
+
 	app.get("/:email/createPersonalRyde", (req, res) => { CONTROLLER.createPersonalRyde(req, res); })
 
 	app.post("/:email/getPassengerRequests", (req, res) => { CONTROLLER.getPassengerRequests(req, res); });
@@ -50,7 +50,11 @@ module.exports = function() {
 	app.post("/postRyde", (req, res) => { CONTROLLER.postRyde(req, res); });
 
 	app.post("/findRyde", (req, res) => { CONTROLLER.findRyde(req, res); });
-	
+
+	app.post("/incrementRydeID", (req, res) => { CONTROLLER.incrementRydeID(req, res); });
+
+	app.post("/getRydeID", (req, res) => {CONTROLLER.getRydeID(req, res); });
+
 	app.get("/:email/driverView", (req,res) => { CONTROLLER.driverView(req,res); });
 
 	app.get("/:email/pending", (req,res) => {CONTROLLER.pending(req,res); });
@@ -61,7 +65,7 @@ module.exports = function() {
 
 
 	// Error get request must always be processed at the very end after all options
-	// have been exhausting in resolving the request. This happens because of the 
+	// have been exhausting in resolving the request. This happens because of the
 	// next() middleware being used
 	app.get('*', (req, res) => { CONTROLLER.err(req, res); });
 
@@ -71,7 +75,7 @@ module.exports = function() {
 
 	io.on("connection", (socket) => {
 		CONTROLLER.connection(socket);
-		
+
 		// CONTROLLER.idEnquiry returns a promise that we need to resolve
 		CONTROLLER.idEnquiry(socket).then((id) => {
 
@@ -91,7 +95,7 @@ module.exports = function() {
 	// always be the last thing to get invoked when non asynchronous functions are invoked.
 
 	// Functions like setTimeout pushes the funciton down the function execution queue.
-	
+
 	server.listen(app.get("port"), CONTROLLER.intro());
 
 //	server.listen(4000, CONTROLLER.socketIntro());

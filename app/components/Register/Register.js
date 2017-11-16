@@ -27,22 +27,20 @@ import {
 } from "native-base";
 
 import { Actions } from "react-native-router-flux";
-
 import Choice from "../Choice/Choice";
-
 import styles from "./styles";
-
 import config from "./../../config";
-
 import DateTimePicker from 'react-native-modal-datetime-picker';
+import OneSignal from 'react-native-onesignal';
 
 class Register extends Component {
 
 	constructor(props) {
 		super(props);
-		this.address = config.ip;
-		this.baseUrl = "http://" + this.address + ":3000/";
+		this.baseUrl = config();
+		this.onIds = this.onIds.bind(this);
 		this.state = {
+			deviceId: '',
 			date: 'Date of Birth',
 			isDateTimePickerVisible: false,
 			firstName: "First name",
@@ -52,9 +50,7 @@ class Register extends Component {
 			dob: "Date of birth",
 			phone: "Mobile phone number",
 			gender: "Gender",
-			plate: "Car plate number",
-			liscense: "Driver's liscense number",
-			car: "Car model number",
+
 			firstNameS: {
 				color: "grey"
 			},
@@ -81,21 +77,24 @@ class Register extends Component {
 
 			genderS: {
 				color: "grey"
-			},
-
-			plateS: {
-				color: "grey"
-			},
-
-			liscenseS: {
-				color: "grey"
-			},
-
-			carS: {
-				color: "grey"
 			}
 		}
 	}
+
+
+	componentWillMount() {
+	  OneSignal.addEventListener('ids', this.onIds);
+		OneSignal.configure();
+	}
+
+	componentWillUnmount() {
+	    OneSignal.removeEventListener('ids', this.onIds);
+	}
+
+	onIds(device) {
+		this.setState({deviceId: device.userId});
+	}
+
 
 	_showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
 
@@ -186,41 +185,6 @@ class Register extends Component {
 		return phoneCheck;
 	}
 
-	driverFieldsCheck() {
-		let plateCounter = 0;
-		let liscenseCounter = 0;
-		let carCounter = 0;
-
-		for (let i = 0; i < this.state.plate.length; ++i) {
-			// The expression has an and because the letter has to be WITHIN 64 and 123 and only way
-			// it can be within is if it is both greater than 64 and less than 123, also if the char code is a space
-			// the whole expression will be true. Either one of these expression needs to be true in order for the entire
-			// expression to evaluate to true. And both the inner expression needs to be true in order for the inner expression
-			// to evaluate to true
-			if ((this.state.plate.charCodeAt(i) > 64 && this.state.plate.charCodeAt(i) < 123) || this.state.plate.charCodeAt(i) === 32) {
-				++plateCounter;
-			}
-		}
-
-		for (let i = 0; i < this.state.liscense.length; ++i) {
-			if ((this.state.liscense.charCodeAt(i) > 64 && this.state.liscense.charCodeAt(i) < 123) || this.state.liscense.charCodeAt(i) === 32) {
-				++liscenseCounter;
-			}
-		}
-
-		for (let i = 0; i < this.state.car.length; ++i) {
-			if ((this.state.car.charCodeAt(i) > 64 && this.state.car.charCodeAt(i) < 123) || this.state.car.charCodeAt(i) === 32) {
-				++carCounter;
-			}
-		}
-
-		if (plateCounter === this.state.plate.length || liscenseCounter === this.state.liscense.length || carCounter === this.state.car.length) {
-			return false;
-		}
-
-		return true;
-	}
-
 	firstNameChecker() {
 		if (this.state.firstName.length === 0) {
 			return false;
@@ -280,10 +244,11 @@ class Register extends Component {
 				dob: this.state.dob,
 				phone: this.state.phone,
 				gender: this.state.gender,
-				plate: this.state.plate,
-				liscense: this.state.liscence,
-				car: this.state.car,
-				allInfoFilled: this.driverFieldsCheck()
+				plate: '',
+				liscense: '',
+				car: '',
+				allInfoFilled: false,
+				deviceId: this.state.deviceId
 			}
 
 			// I want to send the object only if there are no errors
@@ -311,9 +276,9 @@ class Register extends Component {
 						// res means response object
 						}).then((res) => {
 							if (res.status === 200) {
-								alert("Registration complete");
+								alert("Registration complete"); // should be changed to a message bar
 								// on completing the registration we switch to the login page
-								Actions.login({});
+								Actions.login({type: 'reset'});
 							} else {
 								alert("Error");
 							}
@@ -340,7 +305,7 @@ class Register extends Component {
 			<ScrollView style={{backgroundColor: '#fff'}}>
 				<Header style={{backgroundColor:'rgb(72, 110, 255)'}}>
 					<Body>
-						<Title style={{alignSelf: 'center', fontFamily: 'sans-serif'}}>Register</Title>
+						<Title style={{alignSelf: 'center', fontFamily: 'sans-serif'}}>REGISTER</Title>
 					</Body>
 				</Header>
 
@@ -421,46 +386,6 @@ class Register extends Component {
 						<Item label="Male" value="male" />
 						<Item label="Female" value="female" />
 					</Picker>
-				</Form>
-
-
-
-
-				<Text>  </Text>
-
-				<ListItem itemDivider>
-					<Text>OPTIONAL</Text>
-				</ListItem>
-
-
-				<Form>
-					<Item floatingLabel>
-						<Label style = {this.state.plateS}>Plate number</Label>
-						<Input
-							onChangeText = {(text) => this.setState({plate: text, plateS: {color: "grey"}})}
-						/>
-					</Item>
-				</Form>
-
-
-				<Form>
-					<Item floatingLabel>
-						<Label style = {this.state.liscenseS}>Liscense number</Label>
-						<Input
-							onChangeText = {(text) => this.setState({liscense: text, liscenseS: {color: "grey"}})}
-						/>
-					</Item>
-				</Form>
-
-
-
-				<Form>
-					<Item floatingLabel>
-						<Label style = {this.state.carS}>Car Model</Label>
-						<Input
-							onChangeText = {(text) => this.setState({car: text, carS: {color: "grey"}})}
-						/>
-					</Item>
 				</Form>
 
 				<View style = {{marginTop: 15, marginBottom: 30, paddingLeft: 15, paddingRight: 15}}>

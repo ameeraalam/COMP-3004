@@ -11,36 +11,57 @@ const styles = StyleSheet.create({
     alignItems:'center'
 	},
 
-  userPlaceholder: {
+  userPlaceholderImage: {
 		height:90,
     width: 90,
     borderRadius: 64,
     marginTop:30
 	},
 
-  firstDivision: {
-		flex: 1
+  userName: {
+		color:'#fff',
+		fontSize:20,
+		marginTop:20,
+		fontFamily: 'sans-serif'
 	},
-  firstDivision: {
-		flex: 1
+
+  rating: {
+		flexDirection:'row',
+	flexWrap:'wrap'
 	},
-  firstDivision: {
-    flex: 1
+
+  star: {
+    height:15,
+		width: 15,
+		marginTop:6
   },
-  firstDivision: {
-    flex: 1
+
+  ratingNum: {
+    color:'#fff',
+		marginTop:5.5,
+		fontSize:14,
+		marginLeft:2,
+		fontFamily: 'sans-serif'
   },
-  firstDivision: {
-    flex: 1
+
+  drawerOptions: {
+    flex: 2,
+		backgroundColor: '#fff',
+		marginTop:50
   },
-  firstDivision: {
-    flex: 1
+
+  drawerIcons: {
+    color: 'rgb(72, 110, 255)'
   },
-  firstDivision: {
-    flex: 1
+
+  drawerOptionsMargin: {
+    marginTop:20
   },
-  firstDivision: {
-    flex: 1
+
+  drawerItems: {
+    color:'black',
+		fontSize:18,
+		fontFamily: 'sans-serif' // Corbert
   },
 
 });
